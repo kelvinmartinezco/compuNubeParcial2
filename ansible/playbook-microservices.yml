@@ -1,0 +1,60 @@
+- name: Instalar Docker y desplegar microservicios
+  hosts: microservices
+  become: yes
+  tasks:
+    - name: Instalar paquetes base
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - docker.io
+          - docker-compose-v2
+        state: present
+        update_cache: yes
+
+    - name: Habilitar Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Agregar usuario vagrant al grupo docker
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
+
+    - name: Crear carpeta de app
+      file:
+        path: /opt/microapp/sql
+        state: directory
+        mode: '0755'
+
+    - name: Copiar docker-compose
+      copy:
+        src: /home/vagrant/parcial2/ansible/files/docker-compose.yml
+        dest: /opt/microapp/docker-compose.yml
+        mode: '0644'
+
+    - name: Copiar users.sql
+      copy:
+        src: /home/vagrant/parcial2/ansible/files/sql/users.sql
+        dest: /opt/microapp/sql/users.sql
+        mode: '0644'
+
+    - name: Copiar products.sql
+      copy:
+        src: /home/vagrant/parcial2/ansible/files/sql/products.sql
+        dest: /opt/microapp/sql/products.sql
+        mode: '0644'
+
+    - name: Copiar orders.sql
+      copy:
+        src: /home/vagrant/parcial2/ansible/files/sql/orders.sql
+        dest: /opt/microapp/sql/orders.sql
+        mode: '0644'
+
+    - name: Levantar stack
+      command:
+        cmd: docker compose up -d
+        chdir: /opt/microapp

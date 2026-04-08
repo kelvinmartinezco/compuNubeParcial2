@@ -1,0 +1,80 @@
+services:
+  db_users:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_DATABASE: users_db
+      MYSQL_USER: flask
+      MYSQL_PASSWORD: flaskpass
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - db_users_data:/var/lib/mysql
+      - ./sql/users.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  db_products:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_DATABASE: products_db
+      MYSQL_USER: flask
+      MYSQL_PASSWORD: flaskpass
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - db_products_data:/var/lib/mysql
+      - ./sql/products.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  db_orders:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_DATABASE: orders_db
+      MYSQL_USER: flask
+      MYSQL_PASSWORD: flaskpass
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - db_orders_data:/var/lib/mysql
+      - ./sql/orders.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  users:
+    image: kelvin1597/users-service:latest
+    restart: always
+    environment:
+      MYSQL_HOST: db_users
+      MYSQL_USER: flask
+      MYSQL_PASSWORD: flaskpass
+      MYSQL_DB: users_db
+    ports:
+      - "3001:5002"
+    depends_on:
+      - db_users
+
+  products:
+    image: kelvin1597/products-service:latest
+    restart: always
+    environment:
+      MYSQL_HOST: db_products
+      MYSQL_USER: flask
+      MYSQL_PASSWORD: flaskpass
+      MYSQL_DB: products_db
+    ports:
+      - "3002:5003"
+    depends_on:
+      - db_products
+
+  orders:
+    image: kelvin1597/orders-service:latest
+    restart: always
+    environment:
+      MYSQL_HOST: db_orders
+      MYSQL_USER: flask
+      MYSQL_PASSWORD: flaskpass
+      MYSQL_DB: orders_db
+    ports:
+      - "3003:5004"
+    depends_on:
+      - db_orders
+
+volumes:
+  db_users_data:
+  db_products_data:
+  db_orders_data:

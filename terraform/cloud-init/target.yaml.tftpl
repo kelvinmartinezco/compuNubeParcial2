@@ -1,0 +1,13 @@
+#cloud-config
+users:
+  - default
+  - name: vagrant
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    shell: /bin/bash
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ${ssh_pub_key}
+
+ssh_pwauth: false
+package_update: false

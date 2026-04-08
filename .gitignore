@@ -1,0 +1,11 @@
+.vagrant/
+.terraform/
+*.log
+*.box
+*.vdi
+*.vmdk
+*.vbox
+*.vbox-prev
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
